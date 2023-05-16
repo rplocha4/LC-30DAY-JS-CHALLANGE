@@ -5,14 +5,24 @@
  */
 var timeLimit = function (fn, t) {
   return async function (...args) {
-    return new Promise((res, rej) => {
+    // solution 1
+    // return new Promise((res, rej) => {
+    //   setTimeout(() => {
+    //     rej('Time Limit Exceeded');
+    //   }, t);
+    //   fn(...args)
+    //     .then(res)
+    //     .catch(rej);
+    // });
+
+    // solution 2
+    const newPromise = new Promise((res, rej) => {
       setTimeout(() => {
         rej('Time Limit Exceeded');
       }, t);
-      fn(...args)
-        .then(res)
-        .catch(rej);
     });
+    const fnPromise = fn(...args);
+    return Promise.race([newPromise, fnPromise]);
   };
 };
 
